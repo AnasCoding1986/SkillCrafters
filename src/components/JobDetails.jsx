@@ -4,6 +4,8 @@ import { AuthContext } from "../provider/AuthProvider";
 import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const JobDetails = () => {
 
@@ -15,6 +17,11 @@ const JobDetails = () => {
   const { _id, job_title, category, deadline, description, min_price, max_price, buyer_email } = job;
 
   const handleFormSubmit = async e => {
+
+    if (user?.email === buyer_email) {
+      return toast.error("Action not permitted")
+    }
+
     e.preventDefault();
     const form = e.target
     const jobId = _id
@@ -22,6 +29,10 @@ const JobDetails = () => {
     const email = form.email.value
     const comment = form.comment.value
     const deadline = startDate
+
+    if (price < min_price) {
+      return toast.error("Please ensure at least the minimum price.");
+    }
 
     const bidData = {
       jobId,
@@ -33,7 +44,15 @@ const JobDetails = () => {
       job_title,
       category
     }
-    console.table(bidData)
+
+    try {
+      const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/bid`, bidData);
+      toast.success("data posted succesfully")
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong")
+    }
   }
 
   return (
@@ -104,23 +123,21 @@ const JobDetails = () => {
                 id='emailAddress'
                 type='email'
                 name='email'
-                disabled
+                readOnly
                 defaultValue={user?.email}
                 className='block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md   focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring'
               />
             </div>
 
             <div>
-              <label className='text-gray-700 ' htmlFor='comment'>
-                Comment
-              </label>
-              <input
+              <label className='text-gray-700 ' htmlFor='comment'>Comment</label>
+              <textarea
                 id='comment'
                 name='comment'
-                type='text'
-                className='block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md   focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring'
-              />
+                className='block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring'
+              ></textarea>
             </div>
+
             <div className='flex flex-col gap-2 '>
               <label className='text-gray-700'>Deadline</label>
 
