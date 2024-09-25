@@ -1,29 +1,42 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../provider/AuthProvider";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const MyPostedJobs = () => {
     const { user } = useContext(AuthContext);
     const [jobs, setJobs] = useState([]);
 
     useEffect(() => {
-        const getJobs = async () => {
-            try {
-                const { data } = await axios(
-                    `${import.meta.env.VITE_API_URL}/jobs/${user?.email}`
-                );
-                setJobs(data);
-            } catch (error) {
-                console.error("Error fetching jobs:", error);
-            }
-        };
         if (user) {
             getJobs();
         }
     }, [user]);
 
-    const handleDelete = (id) => {
-        console.log(id);
+    const getJobs = async () => {
+        try {
+            const { data } = await axios(
+                `${import.meta.env.VITE_API_URL}/jobs/${user?.email}`
+            );
+            setJobs(data);
+        } catch (error) {
+            console.error("Error fetching jobs:", error);
+        }
+    };
+
+    const handleDelete = async (id) => {
+        try {
+            const {data} = await axios.delete(
+                `${import.meta.env.VITE_API_URL}/job/${id}`
+            );
+            console.log(data);
+            toast.success("deleted successfully");
+            getJobs()
+            
+        } catch (error) {
+            console.log(error);
+            toast.error("something went wrong")
+        }
         
     }
 
@@ -97,7 +110,7 @@ const MyPostedJobs = () => {
                                                 </td>
                                                 <td className="px-4 py-4 text-sm whitespace-nowrap">
                                                     <div className="flex items-center gap-x-2">
-                                                        <p className="px-3 py-1 rounded-full text-blue-500 bg-blue-100/60 text-xs">
+                                                        <p className={`px-3 py-1 rounded-full ${job.category==="Web Development" && "text-blue-500 bg-blue-100/60"} ${job.category === "Graphics Design" && "text-green-500 bg-green-100/60"} ${job.category==="Digital Marketing" && "text-pink-500 bg-pink-100/60"} text-xs`}>
                                                             {job.category}
                                                         </p>
                                                     </div>
