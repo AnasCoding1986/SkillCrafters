@@ -1,16 +1,22 @@
 import { Link, useNavigate } from "react-router-dom"
 import bgLogin from "../../assets/images/register.jpg"
 import logo from "../../assets/images/logo.png"
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 import { AuthContext } from "../../provider/AuthProvider"
 import toast from 'react-hot-toast';
 import { updateProfile } from "firebase/auth";
 
 const Registration = () => {
   const navigate = useNavigate();
-  const { signIn, signInWithGoogle, user, setUser, createUser, updateUserProfile } = useContext(AuthContext);
+  const { signIn, signInWithGoogle, user, loading, setUser, createUser, updateUserProfile } = useContext(AuthContext);
   const location = useLocation();
   const from = location.state || "/";
+
+  useEffect(()=>{
+    if (user) {
+      navigate("/")
+    }
+  },[navigate,user])
 
   // handleGoogleSign
   const handleGoogleSign = async () => {
@@ -46,6 +52,8 @@ const Registration = () => {
     }
 
   }
+
+  if (user || loading) return
 
   return (
     <div className='flex my-12 justify-center items-center min-h-[calc(100vh-306px)]'>
