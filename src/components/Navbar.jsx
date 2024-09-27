@@ -5,9 +5,9 @@ import { AuthContext } from "../provider/AuthProvider"
 import { Link } from "react-router-dom"
 
 const Navbar = () => {
-    const {user, logOut} = useContext(AuthContext)
-    console.log(user);
-    
+    const { user, logOut } = useContext(AuthContext)
+    console.log(user?.photoURL);
+
     return (
         <div className='navbar bg-base-100 shadow-sm container px-4 mx-auto'>
             <div className='flex-1'>
@@ -39,10 +39,11 @@ const Navbar = () => {
                         >
                             <div title={user?.displayName} className='w-10 rounded-full' >
                                 <img
-                                    referrerPolicy='Linkreferrer'
+                                    referrerPolicy='no-referrer'
                                     alt='User Profile Photo'
                                     src={user?.photoURL}
                                 />
+
                             </div>
                         </div>
                         <ul

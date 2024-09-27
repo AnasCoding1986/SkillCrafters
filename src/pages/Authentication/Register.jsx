@@ -9,13 +9,15 @@ import { updateProfile } from "firebase/auth";
 const Registration = () => {
   const navigate = useNavigate();
   const { signIn, signInWithGoogle, user, setUser, createUser, updateUserProfile } = useContext(AuthContext);
+  const location = useLocation();
+  const from = location.state || "/";
 
   // handleGoogleSign
   const handleGoogleSign = async () => {
     try {
       await signInWithGoogle();
       toast.success('Sign in successful');
-      navigate("/")
+      navigate(from, {replace:true});
 
     } catch (error) {
       console.log(error);
@@ -37,7 +39,7 @@ const Registration = () => {
       await updateProfile(name,photo);
       setUser({...user, photoURL: photo, displayName: name});
       toast.success('Sign up successful');
-      navigate("/")
+      navigate(from, {replace:true});
     } catch (error) {
       console.log(error);
       toast.error('This is an error!');

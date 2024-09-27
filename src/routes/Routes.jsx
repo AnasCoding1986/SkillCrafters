@@ -13,6 +13,7 @@ import MyBids from "../pages/MyBids";
 import MyPostedJob from "../pages/MyPostedJob";
 import BidRequests from "../pages/BidRequests";
 import UpdateJob from "../pages/UpdateJob";
+import PrivateRoute from "./PrivateRoute";
 
 const router = createBrowserRouter([
   {
@@ -34,31 +35,31 @@ const router = createBrowserRouter([
       },
       {
         path: "/job/:id",
-        element: <JobDetails></JobDetails>,
+        element: <PrivateRoute><JobDetails></JobDetails></PrivateRoute>,
         loader: ({ params }) =>
           fetch(`${import.meta.env.VITE_API_URL}/job/${params.id}`)
       },
       {
         path: "/update/:id",
-        element: <UpdateJob></UpdateJob>,
+        element: <PrivateRoute><UpdateJob></UpdateJob></PrivateRoute>,
         loader: ({ params }) =>
           fetch(`${import.meta.env.VITE_API_URL}/job/${params.id}`)
       },
       {
         path: "/add-job",
-        element: <AddJob></AddJob>
+        element: <PrivateRoute><AddJob></AddJob></PrivateRoute>
       },
       {
         path: "/my-bids",
-        element: <MyBids></MyBids>
+        element: <PrivateRoute><MyBids></MyBids></PrivateRoute>
       },
       {
         path: "/my-posted-jobs",
-        element: <MyPostedJob></MyPostedJob>
+        element: <PrivateRoute><MyPostedJob></MyPostedJob></PrivateRoute>
       },
       {
         path: "/bid-request",
-        element: <BidRequests></BidRequests>
+        element: <PrivateRoute><BidRequests></BidRequests></PrivateRoute>
       },
 
     ],
