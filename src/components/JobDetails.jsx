@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { useLoaderData } from "react-router-dom"
+import { useLoaderData, useNavigate } from "react-router-dom"
 import { AuthContext } from "../provider/AuthProvider";
 import DatePicker from "react-datepicker";
 
@@ -11,6 +11,7 @@ const JobDetails = () => {
 
   const [startDate, setStartDate] = useState(new Date());
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const job = useLoaderData();
   console.log(job);
@@ -47,7 +48,8 @@ const JobDetails = () => {
 
     try {
       const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/bid`, bidData);
-      toast.success("data posted succesfully")
+      toast.success("data posted succesfully");
+      navigate("/my-bids")
       console.log(data);
     } catch (error) {
       console.log(error);

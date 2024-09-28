@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import bgLogin from "../../assets/images/register.jpg"
 import logo from "../../assets/images/logo.png"
 import { useContext, useEffect } from "react"
