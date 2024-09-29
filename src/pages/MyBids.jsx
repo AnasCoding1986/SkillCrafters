@@ -118,6 +118,8 @@ const MyBids = () => {
                       <td className='px-4 py-4 text-sm whitespace-nowrap'>
                         <button
                           title='Mark Complete'
+                          disabled={bid.status !== "In Progress"}
+                          // onClick={()=>handleStatus(bid._id)}
                           className='text-gray-500 transition-colors duration-200   hover:text-red-500 focus:outline-none disabled:cursor-not-allowed'
                         >
                           <svg

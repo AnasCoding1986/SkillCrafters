@@ -29,6 +29,7 @@ const JobDetails = () => {
     const email = form.email.value
     const comment = form.comment.value
     const deadline = startDate
+    const status = "Pending"
 
     if (price < min_price) {
       return toast.error("Please ensure at least the minimum price.");
@@ -43,6 +44,7 @@ const JobDetails = () => {
       buyer_email:buyer?.email,
       job_title,
       category,
+      status,
       buyer
     }
 
