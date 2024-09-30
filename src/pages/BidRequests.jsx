@@ -4,8 +4,7 @@ import axios from "axios";
 
 const BidRequests = () => {
   const { user } = useContext(AuthContext);
-  console.log(user?.email);
-  
+
   const [bids, setBids] = useState([]);
   const [loading, setLoading] = useState(true); // New loading state
 
@@ -21,13 +20,28 @@ const BidRequests = () => {
       const { data } = await axios(
         `${import.meta.env.VITE_API_URL}/bid-request/${user?.email}`
       );
+      console.log("Fetched bids:", data); // Debug: Check if data includes updated category
       setBids(data);
-      console.log(bids);
-      
     } catch (error) {
       console.error("Error fetching bids:", error);
     } finally {
       setLoading(false); // Stop loading
+    }
+  };
+
+  const handleStatus = async (id, prevStatus, CurrentStatus) => {
+    if (prevStatus === CurrentStatus) {
+      return console.log("No status change");
+    }
+    try {
+      const { data } = await axios.patch(
+        `${import.meta.env.VITE_API_URL}/bid/${id}`,
+        { CurrentStatus }
+      );
+      console.log("Updated bid:", data); // Debug: Check if status update reflects in data
+      getBids(); // Re-fetch bids after updating status
+    } catch (error) {
+      console.error("Error updating status:", error);
     }
   };
 
@@ -51,7 +65,10 @@ const BidRequests = () => {
           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
               <div className="overflow-hidden border border-gray-200 md:rounded-lg">
-                <table className="min-w-full divide-y divide-gray-200" role="table">
+                <table
+                  className="min-w-full divide-y divide-gray-200"
+                  role="table"
+                >
                   <thead className="bg-gray-50">
                     <tr>
                       <th
@@ -125,9 +142,7 @@ const BidRequests = () => {
                         </td>
                         <td className="px-4 py-4 text-sm whitespace-nowrap">
                           <div className="flex items-center gap-x-2">
-                            <p
-                              className="px-3 py-1 rounded-full text-blue-500 bg-blue-100/60 text-xs"
-                            >
+                            <p className="px-3 py-1 rounded-full text-blue-500 bg-blue-100/60 text-xs">
                               {bid.category}
                             </p>
                           </div>
@@ -135,12 +150,17 @@ const BidRequests = () => {
                         <td className="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                           <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 bg-yellow-100/60 text-yellow-500">
                             <span className="h-1.5 w-1.5 rounded-full bg-yellow-500"></span>
-                            <h2 className="text-sm font-normal ">{bid.status}</h2>
+                            <h2 className="text-sm font-normal ">
+                              {bid.status}
+                            </h2>
                           </div>
                         </td>
                         <td className="px-4 py-4 text-sm whitespace-nowrap">
                           <div className="flex items-center gap-x-6">
                             <button
+                              onClick={() => {
+                                handleStatus(bid._id, bid.status, "In Progress");
+                              }}
                               className="text-gray-500 transition-colors duration-200 hover:text-red-500 focus:outline-none"
                               aria-label="Mark as complete"
                             >
