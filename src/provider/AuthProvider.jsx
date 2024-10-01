@@ -11,6 +11,7 @@ import {
   updateProfile,
 } from 'firebase/auth'
 import { app } from '../firebase/firebase.config'
+import axios from 'axios'
 
 export const AuthContext = createContext(null)
 const auth = getAuth(app)
@@ -37,8 +38,22 @@ const AuthProvider = ({ children }) => {
 
   const logOut = async () => {
     setLoading(true)
-    return signOut(auth)
+    try {
+      // Perform server-side logout
+      const { data } = await axios(`${import.meta.env.VITE_API_URL}/logout`, {
+        withCredentials: true,
+      });
+      console.log(data);
+  
+      // Perform Firebase sign out
+      await signOut(auth);
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      setLoading(false); // Ensure loading state is reset
+    }
   }
+  
 
   const updateUserProfile = (name, photo) => {
     return updateProfile(auth.currentUser, {

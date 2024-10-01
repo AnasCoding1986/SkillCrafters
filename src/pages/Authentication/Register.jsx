@@ -5,6 +5,7 @@ import { useContext, useEffect } from "react"
 import { AuthContext } from "../../provider/AuthProvider"
 import toast from 'react-hot-toast';
 import { updateProfile } from "firebase/auth";
+import axios from "axios"
 
 const Registration = () => {
   const navigate = useNavigate();
@@ -12,18 +13,24 @@ const Registration = () => {
   const location = useLocation();
   const from = location.state || "/";
 
-  useEffect(()=>{
+  useEffect(() => {
     if (user) {
       navigate("/")
     }
-  },[navigate,user])
+  }, [navigate, user])
 
   // handleGoogleSign
   const handleGoogleSign = async () => {
     try {
-      await signInWithGoogle();
+      const result = await signInWithGoogle();
+      const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/jwt`,
+        { email: result?.user?.email },
+        { withCredentials: true }
+      );
+      console.log(data);
+
       toast.success('Sign in successful');
-      navigate(from, {replace:true});
+      navigate(from, { replace: true });
 
     } catch (error) {
       console.log(error);
@@ -39,13 +46,18 @@ const Registration = () => {
     const name = form.name.value;
     const photo = form.photo.value;
     const password = form.password.value;
-    console.log(email,name,photo,password);
+    console.log(email, name, photo, password);
     try {
-      const result = await createUser(email,password);
-      await updateProfile(name,photo);
-      setUser({...user, photoURL: photo, displayName: name});
+      const result = await createUser(email, password);
+      const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/jwt`,
+        { email: result?.user?.email },
+        { withCredentials: true }
+      );
+      console.log(data);
+      await updateProfile(name, photo);
+      setUser({ ...user, photoURL: photo, displayName: name });
       toast.success('Sign up successful');
-      navigate(from, {replace:true});
+      navigate(from, { replace: true });
     } catch (error) {
       console.log(error);
       toast.error('This is an error!');

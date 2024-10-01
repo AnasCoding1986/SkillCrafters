@@ -4,6 +4,7 @@ import logo from "../../assets/images/logo.png"
 import { useContext, useEffect } from "react"
 import { AuthContext } from "../../provider/AuthProvider"
 import toast from 'react-hot-toast';
+import axios from "axios"
 
 const Login = () => {
     const navigate = useNavigate();
@@ -11,26 +12,30 @@ const Login = () => {
     const location = useLocation();
     const from = location.state || "/";
 
-    useEffect(()=>{
+    useEffect(() => {
         if (user) {
-            navigate("/")
+            navigate("/");
         }
-    },[navigate,user])
+    }, [navigate, user]);
 
     // handleGoogleSign
     const handleGoogleSign = async () => {
         try {
-            await signInWithGoogle();
-            toast.success('Sign in successful');
-            navigate(from, {replace:true});
-            toast.success("Login successful")
+            const result = await signInWithGoogle();
+            const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/jwt`,
+                { email: result?.user?.email },
+                { withCredentials: true }
+            );
+            console.log(data);
 
+            toast.success('Sign in successful');
+            navigate(from, { replace: true });
+            toast.success("Login successful");
         } catch (error) {
             console.log(error);
             toast.error('This is an error!');
-            
         }
-    }
+    };
 
     // handleEmailSignIn
     const handleEmailSignIn = async (e) => {
@@ -38,19 +43,30 @@ const Login = () => {
         const form = e.target;
         const email = form.email.value;
         const pass = form.password.value;
-        console.log(email,pass);
+        console.log(email, pass);
         try {
-            const res = await signIn(email,pass);
+            const result = await signIn(email, pass);
+            const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/jwt`,
+                { email: result?.user?.email },
+                { withCredentials: true }
+            );
+            console.log(data);
             toast.success('Sign in successful');
-            navigate(from, {replace:true});
+            navigate(from, { replace: true });
         } catch (error) {
             console.log(error);
             toast.error('This is an error!');
         }
-        
+    };
+
+    // Render loading or redirect if user is logged in
+    if (loading) {
+        return <div>Loading...</div>; // Show loading spinner
     }
 
-    if (user || loading) return
+    if (user) {
+        return null; // Prevent further rendering
+    }
 
     return (
         <div className='flex my-12 justify-center items-center min-h-[calc(100vh-306px)]'>
@@ -64,18 +80,15 @@ const Login = () => {
 
                 <div className='w-full px-6 py-8 md:px-8 lg:w-1/2'>
                     <div className='flex justify-center mx-auto'>
-                        <img
-                            className='w-auto h-7 sm:h-8'
-                            src={logo}
-                            alt=''
-                        />
+                        <img className='w-auto h-7 sm:h-8' src={logo} alt='' />
                     </div>
 
-                    <p className='mt-3 text-xl text-center text-gray-600 '>
-                        Welcome back!
-                    </p>
+                    <p className='mt-3 text-xl text-center text-gray-600 '>Welcome back!</p>
 
-                    <div onClick={handleGoogleSign} className='flex cursor-pointer items-center justify-center mt-4 text-gray-600 transition-colors duration-300 transform border rounded-lg   hover:bg-gray-50 '>
+                    <div
+                        onClick={handleGoogleSign}
+                        className='flex cursor-pointer items-center justify-center mt-4 text-gray-600 transition-colors duration-300 transform border rounded-lg hover:bg-gray-50 '
+                    >
                         <div className='px-4 py-2'>
                             <svg className='w-6 h-6' viewBox='0 0 40 40'>
                                 <path
@@ -156,22 +169,18 @@ const Login = () => {
                         </div>
                     </form>
 
-                    <div className='flex items-center justify-between mt-4'>
-                        <span className='w-1/5 border-b  md:w-1/4'></span>
-
+                    <div className='mt-6 text-center'>
                         <Link
                             to='/registration'
-                            className='text-xs text-gray-500 uppercase  hover:underline'
+                            className='text-sm text-gray-400 focus:outline-none focus:underline hover:underline'
                         >
-                            or sign up
+                            Don't have an account yet? <span className="font-bold">Sign up</span>
                         </Link>
-
-                        <span className='w-1/5 border-b  md:w-1/4'></span>
                     </div>
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
+export default Login;
 
-export default Login

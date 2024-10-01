@@ -191,7 +191,8 @@ const BidRequests = () => {
                               onClick={() => {
                                 handleStatus(bid._id, bid.status, "Rejected");
                               }}
-                              className="text-gray-500 transition-colors duration-200 hover:text-yellow-500 focus:outline-none"
+                              disabled={bid.status === "Complete"}
+                              className="disabled:cursor-not-allowed text-gray-500 transition-colors duration-200 hover:text-yellow-500 focus:outline-none"
                               aria-label="Mark as pending"
                             >
                               <svg
