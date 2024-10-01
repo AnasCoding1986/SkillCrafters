@@ -20,7 +20,6 @@ const BidRequests = () => {
       const { data } = await axios(
         `${import.meta.env.VITE_API_URL}/bid-request/${user?.email}`
       );
-      console.log("Fetched bids:", data); // Debug: Check if data includes updated category
       setBids(data);
     } catch (error) {
       console.error("Error fetching bids:", error);
@@ -29,14 +28,16 @@ const BidRequests = () => {
     }
   };
 
-  const handleStatus = async (id, prevStatus, CurrentStatus) => {
-    if (prevStatus === CurrentStatus) {
+  const handleStatus = async (id, prevStatus, stat) => {
+    console.log(id, prevStatus, stat);
+
+    if (prevStatus === stat) {
       return console.log("No status change");
     }
     try {
       const { data } = await axios.patch(
         `${import.meta.env.VITE_API_URL}/bid/${id}`,
-        { CurrentStatus }
+        { status: stat }
       );
       console.log("Updated bid:", data); // Debug: Check if status update reflects in data
       getBids(); // Re-fetch bids after updating status
@@ -142,7 +143,10 @@ const BidRequests = () => {
                         </td>
                         <td className="px-4 py-4 text-sm whitespace-nowrap">
                           <div className="flex items-center gap-x-2">
-                            <p className="px-3 py-1 rounded-full text-blue-500 bg-blue-100/60 text-xs">
+                            <p className={`${bid.category === "Digital Marketing" && 'text-blue-500 bg-blue-100/60'}
+                            ${bid.category === "Graphics Design" && 'text-green-500 bg-green-100/60'}
+                            ${bid.category === "Web Development" && 'text-yellow-500 bg-yellow-100/60'}
+                             px-3 py-1 rounded-full text-xs`}>
                               {bid.category}
                             </p>
                           </div>
@@ -157,11 +161,13 @@ const BidRequests = () => {
                         </td>
                         <td className="px-4 py-4 text-sm whitespace-nowrap">
                           <div className="flex items-center gap-x-6">
+                            {/* In progress */}
                             <button
                               onClick={() => {
                                 handleStatus(bid._id, bid.status, "In Progress");
                               }}
-                              className="text-gray-500 transition-colors duration-200 hover:text-red-500 focus:outline-none"
+                              disabled={bid.status === "Complete"}
+                              className="disabled:cursor-not-allowed text-gray-500 transition-colors duration-200 hover:text-red-500 focus:outline-none"
                               aria-label="Mark as complete"
                             >
                               <svg
@@ -180,7 +186,11 @@ const BidRequests = () => {
                               </svg>
                             </button>
 
+                            {/* rejected */}
                             <button
+                              onClick={() => {
+                                handleStatus(bid._id, bid.status, "Rejected");
+                              }}
                               className="text-gray-500 transition-colors duration-200 hover:text-yellow-500 focus:outline-none"
                               aria-label="Mark as pending"
                             >
