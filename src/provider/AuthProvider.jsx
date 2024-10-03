@@ -53,7 +53,6 @@ const AuthProvider = ({ children }) => {
       setLoading(false); // Ensure loading state is reset
     }
   }
-  
 
   const updateUserProfile = (name, photo) => {
     return updateProfile(auth.currentUser, {
