@@ -1,10 +1,10 @@
-import axios from "axios";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import { AuthContext } from "../provider/AuthProvider";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import useAuth from "../hooks/useAuth";
+import useAxiosSecure from "../hooks/useAxiosSecure";
 
 const UpdateJob = () => {
     const navigate = useNavigate();
@@ -12,7 +12,8 @@ const UpdateJob = () => {
     const { _id, job_title, category, deadline, description, min_price, max_price } = job || {};
     
     const [startDate, setStartDate] = useState(new Date(deadline) || new Date());
-    const { user } = useContext(AuthContext);
+    const { user } = useAuth();
+    const axiosSecure = useAxiosSecure()
 
     const handleFormSubmit = async e => {
         e.preventDefault();
@@ -41,7 +42,7 @@ const UpdateJob = () => {
         };
 
         try {
-            const { data } = await axios.put(
+            const { data } = await axiosSecure.put(
                 `${import.meta.env.VITE_API_URL}/job/${_id}`,
                 jobData
             );

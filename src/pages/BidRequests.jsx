@@ -1,10 +1,10 @@
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../provider/AuthProvider";
-import axios from "axios";
+import { useEffect, useState } from "react";
+import useAuth from "../hooks/useAuth";
+import useAxiosSecure from "../hooks/useAxiosSecure";
 
 const BidRequests = () => {
-  const { user } = useContext(AuthContext);
-
+  const { user } = useAuth();
+  const axiosSecure = useAxiosSecure()
   const [bids, setBids] = useState([]);
   const [loading, setLoading] = useState(true); // New loading state
 
@@ -17,8 +17,8 @@ const BidRequests = () => {
   const getBids = async () => {
     setLoading(true); // Start loading
     try {
-      const { data } = await axios(
-        `${import.meta.env.VITE_API_URL}/bid-request/${user?.email}`
+      const { data } = await axiosSecure(
+        `/bid-request/${user?.email}`
       );
       setBids(data);
     } catch (error) {
@@ -35,8 +35,8 @@ const BidRequests = () => {
       return console.log("No status change");
     }
     try {
-      const { data } = await axios.patch(
-        `${import.meta.env.VITE_API_URL}/bid/${id}`,
+      const { data } = await axiosSecure.patch(
+        `/bid/${id}`,
         { status: stat }
       );
       console.log("Updated bid:", data); // Debug: Check if status update reflects in data

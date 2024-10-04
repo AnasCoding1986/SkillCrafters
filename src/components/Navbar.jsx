@@ -1,11 +1,10 @@
 
-import { useContext } from "react"
 import logo from "../assets/images/logo.png"
-import { AuthContext } from "../provider/AuthProvider"
 import { Link } from "react-router-dom"
+import useAuth from "../hooks/useAuth"
 
 const Navbar = () => {
-    const { user, logOut } = useContext(AuthContext)
+    const { user, logOut } = useAuth();
     console.log(user?.photoURL);
 
     return (

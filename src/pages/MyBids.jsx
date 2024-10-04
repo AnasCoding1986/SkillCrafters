@@ -1,9 +1,10 @@
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../provider/AuthProvider";
-import axios from "axios";
+import { useEffect, useState } from "react";
+import useAuth from "../hooks/useAuth";
+import useAxiosSecure from "../hooks/useAxiosSecure";
 
 const MyBids = () => {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
+  const axiosSecure = useAxiosSecure()
   const [bids, setBids] = useState([]);
 
   useEffect(() => {
@@ -14,8 +15,8 @@ const MyBids = () => {
 
   const getBids = async () => {
     try {
-      const { data } = await axios(
-        `${import.meta.env.VITE_API_URL}/my-bids/${user?.email}`
+      const { data } = await axiosSecure(
+        `/my-bids/${user?.email}`
       );
       setBids(data);
     } catch (error) {
@@ -26,8 +27,8 @@ const MyBids = () => {
   const handleStatus = async id => {
     console.log(id);
     try {
-      const { data } = await axios.patch(
-        `${import.meta.env.VITE_API_URL}/bid/${id}`,
+      const { data } = await axiosSecure.patch(
+        `/bid/${id}`,
         { status: "Completed" }
       );
       console.log("Updated bid:", data); // Debug: Check if status update reflects in data
