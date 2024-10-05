@@ -6,6 +6,9 @@ const axiosSecure = axios.create({
 })
 
 const useAxiosSecure = () => {
+
+    // interceptors
+
     return axiosSecure
 };
 
