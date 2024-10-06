@@ -1,29 +1,24 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useAuth from "../hooks/useAuth";
 import useAxiosSecure from "../hooks/useAxiosSecure";
-import { useQuery } from '@tanstack/react-query'
+import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const BidRequests = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure()
-  // const [bids, setBids] = useState([]);
+  const queryClient = useQueryClient()
   const [loading, setLoading] = useState(true); // New loading state
 
   // Queries
   const { data: bids=[], 
+    refetch,
     isPending, 
     isError, 
     error 
   } = useQuery({
-    queryKey: ['bids'],
+    queryKey: ['bids', user?.email],
     queryFn: ()=>getBids(),
   })
-
-  // useEffect(() => {
-  //   if (user) {
-  //     getBids();
-  //   }
-  // }, [user]);
 
   const getBids = async () => {
     setLoading(true); // Start loading
@@ -39,22 +34,36 @@ const BidRequests = () => {
     }
   };
 
+  const {mutateAsync} = useMutation({
+    mutationFn:async ({id,stat})=>{
+      const { data } = await axiosSecure.patch(
+        `/bid/${id}`,
+        { status: stat })
+    },
+    onSuccess:()=> {
+      // refetch()
+      queryClient.invalidateQueries({ queryKey: ['bids'] })
+    }
+  })
+
   const handleStatus = async (id, prevStatus, stat) => {
     console.log(id, prevStatus, stat);
 
     if (prevStatus === stat) {
       return console.log("No status change");
     }
-    try {
-      const { data } = await axiosSecure.patch(
-        `/bid/${id}`,
-        { status: stat }
-      );
-      console.log("Updated bid:", data); // Debug: Check if status update reflects in data
-      getBids(); // Re-fetch bids after updating status
-    } catch (error) {
-      console.error("Error updating status:", error);
-    }
+    // try {
+    //   const { data } = await axiosSecure.patch(
+    //     `/bid/${id}`,
+    //     { status: stat }
+    //   );
+    //   console.log("Updated bid:", data); // Debug: Check if status update reflects in data
+    //   getBids(); // Re-fetch bids after updating status
+    // } catch (error) {
+    //   console.error("Error updating status:", error);
+    // }
+
+    await mutateAsync({id,stat})
   };
 
   return (
