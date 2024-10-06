@@ -14,6 +14,7 @@ import MyPostedJob from "../pages/MyPostedJob";
 import BidRequests from "../pages/BidRequests";
 import UpdateJob from "../pages/UpdateJob";
 import PrivateRoute from "./PrivateRoute";
+import AllJobs from "../pages/AllJobs";
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Home></Home>
+      },
+      {
+        path: "/allJobs",
+        element: <AllJobs></AllJobs>
       },
       {
         path: "/login",
