@@ -5,7 +5,6 @@ import useAuth from "../hooks/useAuth"
 
 const Navbar = () => {
     const { user, logOut } = useAuth();
-    console.log(user?.photoURL);
 
     return (
         <div className='navbar bg-base-100 shadow-sm container px-4 mx-auto'>

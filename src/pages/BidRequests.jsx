@@ -1,18 +1,29 @@
 import { useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
 import useAxiosSecure from "../hooks/useAxiosSecure";
+import { useQuery } from '@tanstack/react-query'
 
 const BidRequests = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure()
-  const [bids, setBids] = useState([]);
+  // const [bids, setBids] = useState([]);
   const [loading, setLoading] = useState(true); // New loading state
 
-  useEffect(() => {
-    if (user) {
-      getBids();
-    }
-  }, [user]);
+  // Queries
+  const { data: bids=[], 
+    isPending, 
+    isError, 
+    error 
+  } = useQuery({
+    queryKey: ['bids'],
+    queryFn: ()=>getBids(),
+  })
+
+  // useEffect(() => {
+  //   if (user) {
+  //     getBids();
+  //   }
+  // }, [user]);
 
   const getBids = async () => {
     setLoading(true); // Start loading
@@ -20,7 +31,7 @@ const BidRequests = () => {
       const { data } = await axiosSecure(
         `/bid-request/${user?.email}`
       );
-      setBids(data);
+      return data;
     } catch (error) {
       console.error("Error fetching bids:", error);
     } finally {
