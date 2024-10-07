@@ -15,9 +15,11 @@ const AllJobs = () => {
           setJobs(data)
       }
       getData()
+      console.log([...Array(5).keys()].map(e=>e+1));
+      
   },[])
 
-  const pages = [1, 2, 3, 4, 5];
+  const pages = [...Array(5).keys()].map(e=>e);
   return (
     <div className='container px-6 py-10 mx-auto min-h-[calc(100vh-306px)] flex flex-col justify-between'>
       <div>
