@@ -7,30 +7,37 @@ import JobCard from '../components/JobCard';
 
 const AllJobs = () => {
 
-  const [jobs,setJobs] = useState([]);
-  const [limit,setLimit] = useState(2);
-  const [count,setCount] = useState();
-  const totalPages = (count/limit);
+  const [jobs, setJobs] = useState([]);
+  const [limit, setLimit] = useState(1);
+  const [cpage, setCpage] = useState(1);
+  const [count, setCount] = useState(0);
+  const totalPages = (count / limit);
 
-  useEffect(()=>{
-      const getData = async () => {
-          const {data} = await axios(`${import.meta.env.VITE_API_URL}/jobs`);
-          setJobs(data);
-      }
-      getData()    
-  },[])
+  useEffect(() => {
+    const getData = async () => {
+      const { data } = await axios(`${import.meta.env.VITE_API_URL}/jobs-all?limit=${limit}&cpage=${cpage}`);
+      setJobs(data);
+    }
+    getData()
+  }, [cpage, limit])
 
-  useEffect(()=>{
-      const getData = async () => {
-          const {data} = await axios(`${import.meta.env.VITE_API_URL}/jobs-count`);
-          setCount(data?.length)
-      }
-      getData();
-      console.log(count);
-          
-  },[])
+  useEffect(() => {
+    const getData = async () => {
+      const { data } = await axios(`${import.meta.env.VITE_API_URL}/jobs-count`);
+      setCount(data?.result)
+      console.log(data);
 
-  const pages = [...Array(5).keys()].map(e=>e);
+    }
+    getData();
+    console.log(count);
+  }, [])
+
+  const hnadlePageButton = (e) => {
+    setCpage(e);
+    console.log(cpage);  
+  }
+
+  const pages = [...Array(totalPages).keys()].map(e => e + 1);
   return (
     <div className='container px-6 py-10 mx-auto min-h-[calc(100vh-306px)] flex flex-col justify-between'>
       <div>
@@ -107,6 +114,7 @@ const AllJobs = () => {
 
         {pages.map(btnNum => (
           <button
+            onClick={()=>hnadlePageButton(btnNum)}
             key={btnNum}
             className={`hidden px-4 py-2 mx-1 transition-colors duration-300 transform  rounded-md sm:inline hover:bg-blue-500  hover:text-white`}
           >
