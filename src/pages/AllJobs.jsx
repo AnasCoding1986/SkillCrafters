@@ -8,15 +8,26 @@ import JobCard from '../components/JobCard';
 const AllJobs = () => {
 
   const [jobs,setJobs] = useState([]);
+  const [limit,setLimit] = useState(2);
+  const [count,setCount] = useState();
+  const totalPages = (count/limit);
 
   useEffect(()=>{
       const getData = async () => {
           const {data} = await axios(`${import.meta.env.VITE_API_URL}/jobs`);
-          setJobs(data)
+          setJobs(data);
       }
-      getData()
-      console.log([...Array(5).keys()].map(e=>e+1));
-      
+      getData()    
+  },[])
+
+  useEffect(()=>{
+      const getData = async () => {
+          const {data} = await axios(`${import.meta.env.VITE_API_URL}/jobs-count`);
+          setCount(data?.length)
+      }
+      getData();
+      console.log(count);
+          
   },[])
 
   const pages = [...Array(5).keys()].map(e=>e);
