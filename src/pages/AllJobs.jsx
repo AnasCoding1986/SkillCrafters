@@ -8,43 +8,46 @@ import JobCard from '../components/JobCard';
 const AllJobs = () => {
 
   const [jobs, setJobs] = useState([]);
-  const [limit, setLimit] = useState(1);
+  const [limit, setLimit] = useState(2);
+  const [filter, setFilter] = useState("");
   const [cpage, setCpage] = useState(1);
   const [count, setCount] = useState(0);
   const totalPages = (count / limit);
 
   useEffect(() => {
     const getData = async () => {
-      const { data } = await axios(`${import.meta.env.VITE_API_URL}/jobs-all?limit=${limit}&cpage=${cpage}`);
+      const { data } = await axios(`${import.meta.env.VITE_API_URL}/jobs-all?limit=${limit}&cpage=${cpage}&filter=${filter}`);
       setJobs(data);
     }
     getData()
-  }, [cpage, limit])
+  }, [cpage, limit,filter])
 
   useEffect(() => {
     const getData = async () => {
       const { data } = await axios(`${import.meta.env.VITE_API_URL}/jobs-count`);
       setCount(data?.result)
-      console.log(data);
-
     }
     getData();
-    console.log(count);
   }, [])
 
   const hnadlePageButton = value => {
     setCpage(value);
     console.log(value);
-
   }
 
   const pages = [...Array(totalPages).keys()].map(e => e + 1);
+
   return (
     <div className='container px-6 py-10 mx-auto min-h-[calc(100vh-306px)] flex flex-col justify-between'>
       <div>
         <div className='flex flex-col md:flex-row justify-center items-center gap-5 '>
           <div>
             <select
+            onChange={e=>{
+              setFilter(e.target.value);
+              setCpage(1)
+            }}
+            // value={filter}
               name='category'
               id='category'
               className='border p-4 rounded-lg'
