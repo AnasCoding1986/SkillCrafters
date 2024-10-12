@@ -11,6 +11,7 @@ const AllJobs = () => {
   const [limit, setLimit] = useState(8);
   const [filter, setFilter] = useState("");
   const [sort, setSort] = useState("");
+  const [search, setSearch] = useState("");
   const [cpage, setCpage] = useState(1);
   const [count, setCount] = useState(0);
   const totalPages = (count / limit);
@@ -41,6 +42,14 @@ const AllJobs = () => {
     setFilter("")
   }
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setSearch(e.target.search.value)
+  }
+
+  console.log(search);
+  
+
   const pages = [...Array(totalPages).keys()].map(e => e + 1);
 
   return (
@@ -65,7 +74,7 @@ const AllJobs = () => {
             </select>
           </div>
 
-          <form>
+          <form onSubmit={handleSearch}>
             <div className='flex p-1 overflow-hidden border rounded-lg    focus-within:ring focus-within:ring-opacity-40 focus-within:border-blue-400 focus-within:ring-blue-300'>
               <input
                 className='px-6 py-2 text-gray-700 placeholder-gray-500 bg-white outline-none focus:placeholder-transparent'
