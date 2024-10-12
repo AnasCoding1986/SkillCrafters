@@ -18,11 +18,11 @@ const AllJobs = () => {
 
   useEffect(() => {
     const getData = async () => {
-      const { data } = await axios(`${import.meta.env.VITE_API_URL}/jobs-all?limit=${limit}&cpage=${cpage}&filter=${filter}&sort=${sort}`);
+      const { data } = await axios(`${import.meta.env.VITE_API_URL}/jobs-all?limit=${limit}&cpage=${cpage}&filter=${filter}&sort=${sort}&search=${search}`);
       setJobs(data);
     }
     getData()
-  }, [cpage, limit, filter, sort])
+  }, [cpage, limit, filter, sort, search])
 
   useEffect(() => {
     const getData = async () => {
