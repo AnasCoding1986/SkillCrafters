@@ -12,9 +12,13 @@ const AllJobs = () => {
   const [filter, setFilter] = useState("");
   const [sort, setSort] = useState("");
   const [search, setSearch] = useState("");
+  const [searchText, setSearchText] = useState("");
   const [cpage, setCpage] = useState(1);
   const [count, setCount] = useState(0);
-  const totalPages = (count / limit);
+  let totalPages = (count / limit);
+
+  console.log(search);
+  
 
   useEffect(() => {
     const getData = async () => {
@@ -38,16 +42,18 @@ const AllJobs = () => {
   }
 
   const handleResetButton = () => {
-    setSort("")
-    setFilter("")
-  }
+    setSort("");
+    setFilter("");
+    setSearchText("");
+    setSearch(""); // Reset the search state as well
+    setCpage(1); // Optionally reset the page to the first page
+  };
+  
 
   const handleSearch = (e) => {
     e.preventDefault();
-    setSearch(e.target.search.value)
+    setSearch(searchText)
   }
-
-  console.log(search);
   
 
   const pages = [...Array(totalPages).keys()].map(e => e + 1);
@@ -79,6 +85,8 @@ const AllJobs = () => {
               <input
                 className='px-6 py-2 text-gray-700 placeholder-gray-500 bg-white outline-none focus:placeholder-transparent'
                 type='text'
+                onChange={e=>setSearchText(e.target.value)}
+                value={searchText}
                 name='search'
                 placeholder='Enter Job Title'
                 aria-label='Enter Job Title'
