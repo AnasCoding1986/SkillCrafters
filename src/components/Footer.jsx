@@ -27,6 +27,8 @@ const Footer = () => {
                 {' '}
                 About{' '}
               </a>
+
+              <p>Challenge day 1</p>
   
               <a
                 href='#'
